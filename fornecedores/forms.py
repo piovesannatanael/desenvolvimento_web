@@ -1,0 +1,13 @@
+from django import forms
+from .models import Fornecedores
+
+class FornecedoresModelForm(forms.ModelForm):
+    class Meta:
+        model = Fornecedores
+        fields = '__all__'
+
+        error_messages = {
+            'nome':{'required':'O nome do fornecedor é um campo obrigatório'},
+            'cnpj':{'required':'O CNPJ do fornecedor é um campo obrigatório', 'unique':'CNPJ já cadastrado'},
+            'fone':{'required':'O numero de telefone é um campo obrigatório'},
+        }
