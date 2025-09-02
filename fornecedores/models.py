@@ -1,6 +1,6 @@
 from django.db import models
 
-class Fornecedores(models.Model):
+class Fornecedor(models.Model):
     nome = models.CharField('Nome', max_length=70, help_text='Nome do fornecedor')
     cnpj = models.CharField('CNPJ', max_length=18, help_text='CNPJ do fornecedor')
     fone = models.CharField('Fone', max_length=20, help_text='Fone do fornecedor')

@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
-from .models import Fornecedores
-from .forms import FornecedoresModelForm
+from .models import Fornecedor
+from .forms import FornecedorModelForm
 
 class FornecedoresView(ListView):
     model = Fornecedor

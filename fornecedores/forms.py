@@ -1,9 +1,9 @@
 from django import forms
-from .models import Fornecedores
+from .models import Fornecedor
 
-class FornecedoresModelForm(forms.ModelForm):
+class FornecedorModelForm(forms.ModelForm):
     class Meta:
-        model = Fornecedores
+        model = Fornecedor
         fields = '__all__'
 
         error_messages = {
