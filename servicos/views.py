@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic.base import TemplateResponseMixin, View
 
-from servicos.forms import ServicoModelForm
+from servicos.forms import ServicoModelForm, ProdutosServicoInLine
 from servicos.models import Servico
 
 
@@ -49,3 +50,24 @@ class ServicoDeleteView(SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy('servicos')
     success_message = 'Serviço excluído com sucesso!'
 
+
+class ServicoInLineEditView(TemplateResponseMixin, View):
+    template_name = 'servico_form_inline.html'
+
+    def get_formset(self, data=None):
+        return ProdutosServicoInLine(instance=self.servico, data=data)
+
+    def dispatch(self, request, pk):
+        self.servico = get_object_or_404(Servico, id=pk)
+        return super().dispatch(request, pk)
+
+    def get(self, request, *args, **kwargs):
+        formset = self.get_formset()
+        return self.render_to_response({'servico': self.servico, 'formset': formset})
+
+    def post(self, request, *args, **kwargs):
+        formset = self.get_formset(data=request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect('servicos')
+        return self.render_to_response({'servico': self.servico, 'formset': formset})

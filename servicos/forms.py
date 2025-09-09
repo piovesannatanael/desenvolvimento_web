@@ -1,6 +1,6 @@
 from django import forms
-
-from .models import Servico
+from django.forms import inlineformset_factory
+from .models import Servico, ProdutosServico
 
 
 class ServicoModelForm(forms.ModelForm):
@@ -16,3 +16,6 @@ class ServicoModelForm(forms.ModelForm):
 
 
         }
+
+ProdutosServicoInLine = inlineformset_factory(Servico, ProdutosServico, fk_name='servico',
+                                              fields=('produto', 'quantidade'), extra=1, can_delete=True)
