@@ -37,7 +37,21 @@
                                         <td> {{ agendamento.horario }} </td>
                                         <td> {{ agendamento.cliente }} </td>
                                         <td> {{ agendamento.funcionario }} </td>
+                                        <td>
+                                            {% for servico in agendamento.servicos %}
+                                                {% if forloop.last %}
+                                                    {{ servico }} ({{servico.get_situacao_display }})
+                                                {% else %}
+                                                    {{ servico }} ({{servico.get_situacao_display }})
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
                                         <td style="text-align: center">
+                                                <a href="{% url 'agendamento_inline' agendamento.pk %}">
+                                                    <span class="icon">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </span>
+                                                </a>
                                                 <a href="{% url 'agendamento_editar' agendamento.pk %}">
                                                     <span class="icon">
                                                         <i class="fas fa-edit"></i>
@@ -48,24 +62,6 @@
                                                         <i class="far fa-trash-alt"></i>
                                                     </span>
                                                 </a>
-
-                                                <span class="icon">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-
-                                                <span class="icon">
-                                                    <i class="fas fa-edit"></i>
-                                                </span>
-
-                                                <span class="icon">
-                                                    <i class="far fa-trash-alt"></i>
-                                                </span>
-                                            
-                                            <a href="#">
-                                                <span class="icon">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </span>
-                                            </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -73,7 +69,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-center">
-                            {% bootstrap_pagination object_list url="/produtos?page=1" size="sm" %}
+                            {% bootstrap_pagination object_list url="/agendamentos?page=1" size="sm" %}
                         </div>
                 </div>
             {% endif %}
