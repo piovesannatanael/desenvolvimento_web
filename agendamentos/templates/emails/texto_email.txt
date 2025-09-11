@@ -1,0 +1,6 @@
+Olá {{cliente}}
+Estamos enviando este email para comunicar que os serviços que voce solicitou já foram concluidas
+
+Dados do agendamento
+Horário: {{ horario }}
+Funcionario responsável pelo agendamento: {{ funcionario }}
