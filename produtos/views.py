@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
@@ -8,7 +9,9 @@ from produtos.forms import ProdutoModelForm
 from produtos.models import Produto
 
 
-class ProdutosView(ListView):
+class ProdutosView(PermissionRequiredMixin, ListView):
+    permission_required = 'produtos.view_produto'
+    permission_denied_message = 'Visualizar produto'
     model = Produto
     template_name = 'produtos.html'
 
@@ -27,21 +30,27 @@ class ProdutosView(ListView):
         else:
             return messages.info(self.request, 'Nenhum produto cadastrado!')
 
-class ProdutoAddView(SuccessMessageMixin, CreateView):
+class ProdutoAddView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    permission_required = 'produtos.add_produto'
+    permission_denied_message = 'Cadastrar produto'
     model = Produto
     form_class = ProdutoModelForm
     template_name = 'produto_form.html'
     success_url = reverse_lazy('produtos')
     success_message = 'Produto cadastrado com sucesso!'
 
-class ProdutoUpdateView(SuccessMessageMixin, UpdateView):
+class ProdutoUpdateView(PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = 'produtos.update_produto'
+    permission_denied_message = 'Atualizar produto'
     model = Produto
     form_class = ProdutoModelForm
     template_name = 'produto_form.html'
     success_url = reverse_lazy('produtos')
     success_message = 'Produto atualizado com sucesso!'
 
-class ProdutoDeleteView(SuccessMessageMixin, DeleteView):
+class ProdutoDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
+    permission_required = 'produtos.delete_produto'
+    permission_denied_message = 'Apagar produto'
     model = Produto
     template_name = 'produto_apagar.html'
     success_url = reverse_lazy('produtos')

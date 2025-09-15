@@ -140,3 +140,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'piovesannatanael@gmail.com'
 EMAIL_HOST_PASSWORD = 'yqok nclq gnyw aczm'
 DEFAULT_FROM_EMAIL = 'Lavacar'
+
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'

@@ -1,7 +1,10 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -13,7 +16,9 @@ from .forms import AgendamentoListForm, AgendamentoModelForm, AgendamentosServic
 from .models import Agendamento, OrdemServicos
 
 
-class AgendamentosView(ListView):
+class AgendamentosView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    permission_required = 'agendamentos.view_agendamento'
+    permission_denied_message = 'Visualizar agendamento'
     model = Agendamento
     template_name = 'agendamentos.html'
 
@@ -44,21 +49,27 @@ class AgendamentosView(ListView):
         else:
             return messages.info(self.request, "Não existem agendamentos cadastrados")
 
-class AgendamentoAddView(SuccessMessageMixin, CreateView):
+class AgendamentoAddView(PermissionRequiredMixin, LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    permission_required = 'agendamentos.add_agendamento'
+    permission_denied_message = 'Cadastrar agendamento'
     model = Agendamento
     form_class = AgendamentoModelForm
     template_name = 'agendamento_form.html'
     success_url = reverse_lazy('agendamentos')
     success_message = "Agendamento cadastrado com sucesso!"
 
-class AgendamentoUpdateView(SuccessMessageMixin, UpdateView):
+class AgendamentoUpdateView(PermissionRequiredMixin, LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = 'agendamentos.update_agendamento'
+    permission_denied_message = 'Atualizar agendamento'
     model = Agendamento
     form_class = AgendamentoModelForm
     template_name = 'agendamento_form.html'
     success_url = reverse_lazy('agendamentos')
     success_message = "Agendamento alterado com sucesso!"
 
-class AgendamentoDeleteView(SuccessMessageMixin, DeleteView):
+class AgendamentoDeleteView(PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
+    permission_required = 'agendamentos.delete_agendamento'
+    permission_denied_message = 'Excluir agendamento'
     model = Agendamento
     template_name = 'agendamento_apagar.html'
     success_url = reverse_lazy('agendamentos')
@@ -66,7 +77,7 @@ class AgendamentoDeleteView(SuccessMessageMixin, DeleteView):
 
 
 
-class AgendamentoInLineEditView(TemplateResponseMixin, View):
+class AgendamentoInLineEditView(LoginRequiredMixin, TemplateResponseMixin, View):
     template_name = 'agendamento_form_inline.html'
 
     def get_formset(self, data=None):
@@ -131,9 +142,29 @@ class AgendamentoExibir(DetailView):
                                 produto.save()
                 agendamento.status = 'F'
                 agendamento.save()
+                self.enviar_email(agendamento)
         return agendamento
 
+    def enviar_email(self, agendamento):
+        email = []
+        email.append(agendamento.cliente.email)
+        descricao = []
+        for servico in agendamento.servicos:
+            descricao.append(f'{servico} - R$ {servico.preco} ({servico.get_situacao_display()})')
 
-
-
+        dados = {'cliente': agendamento.cliente.nome,
+                 'horario': agendamento.horario,
+                 'funcionario': agendamento.funcionario.nome,
+                 'descricao': descricao,
+                 'valor': agendamento.valor,}
+        texto_email = render_to_string('emails/texto_email.txt', dados)
+        html_email = render_to_string('emails/texto_email.html', dados)
+        send_mail(subject='Lavacar - Serviço Concluido',
+                  message=texto_email,
+                  from_email='piovesannatanael@gmail.com',
+                  recipient_list=email,
+                  html_message=html_email,
+                  fail_silently=False
+                  )
+        return redirect('agendamentos')
 

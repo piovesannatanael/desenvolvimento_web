@@ -4,3 +4,17 @@ Estamos enviando este email para comunicar que os serviços que voce solicitou j
 Dados do agendamento
 Horário: {{ horario }}
 Funcionario responsável pelo agendamento: {{ funcionario }}
+
+
+Serviços realizados
+{% for desc in descricao %}
+    {{ desc }} \n
+{% endfor %}
+
+Valor total: {{ valor }}
+
+Informamos que o seu veículo está a disposição para ser retirado.
+
+Agradecemos pela preferencia
+
+LavaCar

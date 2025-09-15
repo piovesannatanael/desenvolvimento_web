@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<h3>Olá <strong>{{cliente}}</strong></h3>
+<p>Estamos enviando este email para comunicar que os serviços que voce solicitou já foram concluidas
+</p>
+<h3>Dados do agendamento</h3>
+<p><strong>Horário:</strong>{{ horario }}</p>
+<p><strong>Funcionario responsável pelo agendamento:</strong>{{ funcionario }}</p>
 
-</body>
-</html>
+<h4>Serviços realizados</h4>
+{% for desc in descricao %}
+    {{ desc }} \n
+{% endfor %}
+
+<p><strong>Valor total:</strong>{{ valor }}</p>
+<p>Informamos que o seu veículo está a disposição para ser retirado.</p>
+<p><strong>Agradecemos pela preferencia</strong></p>
+
+<p style="color: darkcyan"><strong>LavaCar</strong></p>
